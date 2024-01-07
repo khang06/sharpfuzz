@@ -317,7 +317,7 @@ namespace SharpFuzz
             Run(Wrap(action, bufferSize));
         }
 
-        private static unsafe void RunWithoutAflFuzz(Action<Stream> action, Stream stream)
+        public static unsafe void RunWithoutAflFuzz(Action<Stream> action, Stream stream)
         {
             fixed (byte* sharedMem = new byte[MapSize])
             {
@@ -352,6 +352,21 @@ namespace SharpFuzz
                 new TraceWrapper((byte*)shmaddr.DangerousGetHandle());
                 action(stream);
             }
+        }
+
+        public static unsafe void RunNyx(Action<Stream> action)
+        {
+            ThrowIfNull(action, nameof(action));
+
+            using (var stdin = new NyxStream())
+            using (var stream = new UnclosableStreamWrapper(stdin))
+            using (var shmaddr = Native.shmat(5134680, IntPtr.Zero, 0))
+            {
+                Native.nyx_init();
+                new TraceWrapper((byte*)shmaddr.DangerousGetHandle());
+                action(stream);
+            }
+            Native.fast_exit();
         }
 
         // Initial run will usually have the different trace bits

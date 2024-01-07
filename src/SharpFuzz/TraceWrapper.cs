@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace SharpFuzz
 {
-	internal sealed class TraceWrapper
+	public class TraceWrapper
 	{
 		private readonly Action resetPrevLocation;
 

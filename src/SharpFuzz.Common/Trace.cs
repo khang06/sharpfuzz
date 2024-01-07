@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace SharpFuzz.Common
 {
@@ -8,6 +9,11 @@ namespace SharpFuzz.Common
 	/// </summary>
 	public static unsafe class Trace
 	{
+                static Trace()
+                {
+                        SharedMem = (byte*)Marshal.AllocHGlobal(65536);;
+                }
+
 		/// <summary>
 		/// Instrumentation bitmap. Contains XORed pairs of data: identifiers of the
 		/// currently executing branch and the one that executed immediately before.
